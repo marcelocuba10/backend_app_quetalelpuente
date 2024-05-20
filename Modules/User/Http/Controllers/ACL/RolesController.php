@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Input\Input;
 
 class RolesController extends Controller
 {
@@ -24,121 +25,145 @@ class RolesController extends Controller
 
     public function index()
     {
-        $idRefCurrentUser = Auth::user()->idReference;
+        $guard_name = Auth::getDefaultDriver();
         $roles = DB::table('roles')
-            ->where('guard_name', '=', 'web')
-            ->where('roles.idReference', '=', $idRefCurrentUser)
-            ->orWhere('roles.idReference', '=', 0) //roles with IdReference = 0 is system role default - module user
-            ->select('guard_name', 'id', 'name', 'system_role')
-            ->orderBy('created_at', 'DESC')
+            ->leftjoin('users', 'roles.idReference', '=', 'users.idReference')
+            ->select('roles.guard_name', 'roles.id', 'roles.name', 'roles.system_role', 'roles.idReference', 'users.name AS customer_name', 'users.idReference AS customer_idReference')
+            ->orderBy('roles.created_at', 'DESC')
             ->paginate(10);
 
-        return view('user::roles.index', compact('roles'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('user::roles.index', compact('roles', 'guard_name'))->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
     public function create()
     {
         $guard_name = Auth::getDefaultDriver();
+
+        $roleGuard = null;
+        $system_role = null;
+        $guard_names = Role::pluck('guard_name', 'guard_name')->all();
+
+        $keys = array(
+            array('0', 'No'),
+            array('1', 'Si')
+        );
+
         $permissions = DB::table('permissions')
-            ->where('guard_name', '=', 'web')
-            ->select('guard_name', 'id', 'name', 'system_permission')
+            //->where('guard_name', '=', 'user')
+            ->select('guard_name', 'id', 'name')
             ->orderBy('created_at', 'DESC')
             ->get();
 
-        return view('user::roles.create', compact('permissions', 'guard_name'));
+        return view('user::roles.create', compact('permissions', 'keys', 'system_role', 'guard_names', 'roleGuard'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
-            'permission' => 'required'
+            'permission' => 'required',
+            'system_role' => 'required',
+            'guard_name' => 'required'
         ]);
+
+        /** Create idReference; by default it is 6 characters, to create a unique string, I remove 2 characters */
+        $idReference = substr(Auth::user()->id, 0, -2);
 
         $role = Role::create([
             'name' => $request->input('name'),
-            'guard_name' => 'web',
-            'system_role' => 0,
-            'idReference' => Auth::user()->idReference
+            'guard_name' => $request->input('guard_name'),
+            'system_role' => $request->input('system_role'),
+            'idReference' => $idReference
         ]);
 
         $role->syncPermissions($request->input('permission'));
 
-        return redirect()->route('roles.user.index')->with('message', 'Role created successfully');
+        return redirect()->to('/user/ACL/roles')->with('message', 'Role created successfully');
     }
 
     public function show($id)
     {
         $role = Role::find($id);
+
+        $keys = array(
+            array('0', 'No'),
+            array('1', 'Si')
+        );
+
         $permissions = Permission::get();
         $rolePermission = $role->permissions->pluck('name')->toArray();
 
-        return view('user::roles.show', compact('role', 'rolePermission'));
+        //dd($rolePermission);
+        return view('user::roles.show', compact('role', 'rolePermission', 'keys'));
     }
 
     public function edit($id)
     {
-        $guard_name = null;
         $role = Role::find($id);
+        $roleGuard = $role->guard_name;
+        $system_role = $role->system_role;
+        $guard_names = Role::pluck('guard_name', 'guard_name')->all();
+
+        $keys = array(
+            array('0', 'No'),
+            array('1', 'Si')
+        );
 
         $permissions = DB::table('permissions')
-            ->where('guard_name', '=', 'web')
-            ->select('guard_name', 'id', 'name', 'system_permission')
+            ->where('guard_name', '=', $role->guard_name)
+            ->select('guard_name', 'id', 'name')
             ->orderBy('created_at', 'DESC')
             ->get();
 
         $rolePermission = $role->permissions->pluck('name')->toArray();
-        //$rolePermission = DB::table('role_has_permissions')->where('role_has_permissions.role_id', $id)
-        //->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
-        //->all();  
 
-        return view('user::roles.edit', compact('role', 'permissions', 'rolePermission', 'guard_name'));
+        return view('user::roles.edit', compact('role', 'permissions', 'rolePermission', 'roleGuard', 'keys', 'system_role', 'guard_names'));
     }
 
     public function update(Request $request, $id)
     {
         $this->validate($request, [
             'name' => 'required|unique:roles,name,' . $id,
-            'permission' => 'required'
+            'permission' => 'required',
+            'system_role' => 'required',
+            'guard_name' => 'required'
         ]);
 
+        $input = $request->all();
         $role = Role::find($id);
-        $role->name = $request->input('name');
-        $role->save();
+        $role->update($input);
 
         $role->syncPermissions($request->input('permission'));
 
-        return redirect()->route('roles.user.index')->with('message', 'Role updated successfully');
+        return redirect()->to('/user/ACL/roles')->with('message', 'Role updated successfully');
     }
 
     public function search(Request $request)
     {
         $search = $request->input('search');
-        $idRefCurrentUser = Auth::user()->idReference;
+        $guard_name = Auth::getDefaultDriver();
 
         if ($search == '') {
             $roles = DB::table('roles')
-                ->where('guard_name', '=', 'web')
-                ->where('roles.idReference', '=', $idRefCurrentUser)
-                ->orWhere('roles.idReference', '=', 0) //roles with IdReference = 0 is system role default - module user
-                ->select('guard_name', 'id', 'name', 'system_role')
-                ->orderBy('created_at', 'DESC')
+                ->leftjoin('users', 'roles.idReference', '=', 'users.idReference')
+                ->select('roles.guard_name', 'roles.id', 'roles.name', 'roles.system_role', 'roles.idReference', 'users.name AS customer_name', 'users.idReference AS customer_idReference')
+                ->orderBy('roles.created_at', 'DESC')
                 ->paginate(10);
         } else {
             $roles = DB::table('roles')
-                ->where('roles.idReference', '=', $idRefCurrentUser)
-                ->orWhere('roles.idReference', '=', 0) //roles with IdReference = 0 is system role default - module user
+                ->leftjoin('users', 'roles.idReference', '=', 'users.idReference')
+                ->select('roles.guard_name', 'roles.id', 'roles.name', 'roles.system_role', 'roles.idReference', 'users.name AS customer_name', 'users.idReference AS customer_idReference')
                 ->where('roles.name', 'LIKE', "%{$search}%")
+                ->orderBy('roles.created_at', 'DESC')
                 ->paginate();
         }
 
-        return view('user::roles.index', compact('roles', 'search'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('user::roles.index', compact('roles', 'search', 'guard_name'))->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
     public function destroy($id)
     {
         DB::table('roles')->where('id', $id)->delete();
-
-        return redirect()->route('roles.user.index')->with('message', 'Role deleted successfully');
+        return redirect()->to('/user/ACL/roles')->with('message', 'Role deleted successfully');
     }
 }

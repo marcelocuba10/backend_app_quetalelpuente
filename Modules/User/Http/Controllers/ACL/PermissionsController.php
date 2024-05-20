@@ -4,9 +4,12 @@ namespace Modules\User\Http\Controllers\ACL;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 
 //spatie
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 class PermissionsController extends Controller
@@ -23,28 +26,66 @@ class PermissionsController extends Controller
     public function index()
     {
         $permissions = DB::table('permissions')
-            ->where('guard_name', '=', 'web')
-            ->select('guard_name', 'id', 'name', 'system_permission')
+            ->select('guard_name', 'id', 'name')
             ->orderBy('created_at', 'DESC')
-            ->paginate(10);
+            ->paginate(16);
 
-        return view('user::permissions.index', compact('permissions'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('user::permissions.index', compact('permissions'))->with('i', (request()->input('page', 1) - 1) * 16);
+    }
+
+    public function getPermissions(Request $request)
+    {
+        $guard_name = $request->guard_name;
+        $id =  $request->id;
+
+        /** Edit Role form */
+        if ($id) {
+            $role = Role::find($id);
+            $permissions = DB::table('permissions')
+                ->where('guard_name', '=', $guard_name)
+                ->select('guard_name', 'id', 'name')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            $rolePermission = $role->permissions->pluck('name')->toArray();
+
+            /** New Role form */
+        } else {
+            $permissions = DB::table('permissions')
+                ->where('guard_name', '=', $guard_name)
+                ->select('guard_name', 'id', 'name')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            $rolePermission = null;
+        }
+
+        return View::make('user::roles._partials.data', compact('permissions', 'rolePermission'));
     }
 
     public function create()
     {
-        return view('user::permissions.create');
+        $guard_names = Role::pluck('guard_name', 'guard_name')->all();
+        $permissionGuard = null;
+        $guard_name = Auth::getDefaultDriver();
+
+        return view('user::permissions.create', compact('guard_name', 'guard_names', 'permissionGuard'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|unique:permissions,name',
+            'guard_name' => 'required',
         ]);
 
         // Define a `publish articles` permission for the user users belonging to the user guard
-        Permission::create(['name' => $request->input('name'), 'guard_name' => 'web']);
-        return redirect()->route('permissions.user.index')->with('message', 'Permission created successfully!');
+        Permission::create([
+            'name' => $request->input('name'),
+            'guard_name' => $request->input('guard_name'),
+        ]);
+
+        return redirect()->to('/user/ACL/permissions')->with('message', 'Permission created successfully!');
     }
 
     public function show($id)
@@ -59,23 +100,26 @@ class PermissionsController extends Controller
 
     public function edit($id)
     {
-        $title = 'Permission';
         $permission = Permission::find($id);
+        $permissionGuard = $permission->guard_name;
 
-        return view('user::permissions.edit', compact('permission', 'title'));
+        $guard_names = Role::pluck('guard_name', 'guard_name')->all();
+
+        return view('user::permissions.edit', compact('permission', 'permissionGuard', 'guard_names'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|unique:permissions,name,' . $id,
+            'guard_name' => 'required'
         ]);
 
         $input = $request->all();
         $permission = Permission::find($id);
         $permission->update($input);
 
-        return redirect()->route('permissions.user.index')->with('message', 'Permission updated successfully.');
+        return redirect()->to('/user/ACL/permissions')->with('message', 'Permission updated successfully.');
     }
 
     public function search(Request $request)
@@ -83,10 +127,13 @@ class PermissionsController extends Controller
         $search = $request->input('search');
 
         if ($search == '') {
-            $permissions = DB::table('permissions')->paginate(10);
+            $permissions = DB::table('permissions')
+                ->orderBy('created_at', 'DESC')
+                ->paginate(10);
         } else {
             $permissions = DB::table('permissions')
                 ->where('permissions.name', 'LIKE', "%{$search}%")
+                ->orderBy('created_at', 'DESC')
                 ->paginate();
         }
 
@@ -96,6 +143,6 @@ class PermissionsController extends Controller
     public function destroy($id)
     {
         Permission::find($id)->delete();
-        return redirect()->route('permissions.user.index')->with('message', 'Permission deleted successfully');
+        return redirect()->to('/user/ACL/permissions')->with('message', 'Permission deleted successfully');
     }
 }

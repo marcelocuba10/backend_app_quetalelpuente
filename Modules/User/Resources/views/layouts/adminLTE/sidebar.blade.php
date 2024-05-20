@@ -1,14 +1,14 @@
   <!-- ======== sidebar-nav start =========== -->
   <aside class="sidebar-nav-wrapper style-2">
     <div class="navbar-logo">
-      <a href="/">
-        <img src="/img/logo-300x90.png" alt="logo" width="175px" height="58px"/>
+      <a href="{{ url('/') }}">
+        <img src="{{ asset('public/images/logos/logo-brown.png') }}" alt="logo" style="width: 180px;"/>
       </a>
     </div>
     <nav class="sidebar-nav">
       <ul>
         <li class="nav-item {{ (request()->is('user/dashboard')) ? 'active' : '' }}">
-          <a href="/user/dashboard">
+          <a href="{{ url('/user/dashboard') }}">
             <span class="icon">
               <svg width="22" height="22" viewBox="0 0 22 22">
                 <path d="M17.4167 4.58333V6.41667H13.75V4.58333H17.4167ZM8.25 4.58333V10.0833H4.58333V4.58333H8.25ZM17.4167 11.9167V17.4167H13.75V11.9167H17.4167ZM8.25 15.5833V17.4167H4.58333V15.5833H8.25ZM19.25 2.75H11.9167V8.25H19.25V2.75ZM10.0833 2.75H2.75V11.9167H10.0833V2.75ZM19.25 10.0833H11.9167V19.25H19.25V10.0833ZM10.0833 13.75H2.75V19.25H10.0833V13.75Z" />
@@ -17,9 +17,8 @@
             <span class="text">Dashboard</span>
           </a>
         </li>
-
         <li class="nav-item {{ (request()->is('user/webcams')) ? 'active' : '' }}">
-          <a href="/user/webcams">
+          <a href="{{ url('/user/webcams') }}">
             <span class="icon">
               <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M12,23A1,1 0 0,1 11,22V19H7A2,2 0 0,1 5,17V7C5,5.89 5.9,5 7,5H21A2,2 0 0,1 23,7V17A2,2 0 0,1 21,19H16.9L13.2,22.71C13,22.9 12.75,23 12.5,23V23H12M13,17V20.08L16.08,17H21V7H7V17H13M3,15H1V3A2,2 0 0,1 3,1H19V3H3V15Z" />
@@ -37,17 +36,29 @@
             </span>
             <span class="text">Ajustes</span>
           </a>
-          <ul id="ddmenu_2" class="dropdown-nav" style="{{ (request()->is('user/users')) || (request()->is('user/ACL/*')) ? '' : 'display:none'}}">
-            @can('user-list')
+          <ul id="ddmenu_2" class="dropdown-nav" style="{{ (request()->is('user/users')) || (request()->is('user/users/*')) || (request()->is('user/ACL/*')) || (request()->is('user/parameters')) || (request()->is('user/parameters/*')) ? '' : 'display:none'}}">
             <li>
-              <a href="/user/users" class="{{ (request()->is('user/users')) ? 'active' : '' }}">
-                <span class="text">Usuarios</span>
+              <a href="{{ url('/user/users') }}" class="{{ (request()->is('user/users')) || (request()->is('user/users/*')) ? 'active' : '' }}">
+                <span class="text">Administradores</span>
               </a>
             </li>
-            @endcan
-            @can('role-list')
+            @can('role-list','permission-list')
             <li>
-              <a href="/user/ACL/roles" class="{{ (request()->is('user/ACL/roles')) ? 'active' : '' }}"><span class="text">Roles</span></a>
+              <a aria-expanded="false" class="collapsed" id="ddlink_3" href="#" onclick="toggle('ddmenu_3', 'ddlink_3')">
+                <span class="text">ACL</span>
+              </a>
+              <ul id="ddmenu_3" class="dropdown-nav" style="{{ (request()->is('user/ACL/*')) ? '' : 'display:none' }}">
+                @can('role-list')
+                <li>
+                  <a href="{{ url('/user/ACL/roles') }}" class="{{ (request()->is('user/ACL/roles')) || (request()->is('user/ACL/roles/*')) ? 'active' : '' }}"><span class="text">Roles</span></a>
+                </li>
+                @endcan
+                @can('permission-list')
+                <li>
+                  <a href="{{ url('/user/ACL/permissions') }}" class="{{ (request()->is('admuserin/ACL/permissions')) || (request()->is('user/ACL/permissions/*')) ? 'active' : '' }}"><span class="text">Permisos</span></a>
+                </li>
+                @endcan
+              </ul>
             </li>
             @endcan
           </ul>
@@ -56,7 +67,6 @@
     </nav>
   </aside>
   <div class="overlay"></div>  
-  <!-- ======== sidebar-nav end =========== -->
 
   <script type="text/javascript">
     function toggle(ddmenu_1, ddlink_1) {
@@ -67,6 +77,16 @@
       }else{
         n.style.display = '';
         document.getElementById(ddlink_1).setAttribute('aria-expanded', 'true');
+      }
+    }
+    function toggle(ddmenu_3, ddlink_3) {
+      var n = document.getElementById(ddmenu_3);
+      if (n.style.display != 'none'){
+        n.style.display = 'none';
+        document.getElementById(ddlink_3).setAttribute('aria-expanded', 'false');
+      }else{
+        n.style.display = '';
+        document.getElementById(ddlink_3).setAttribute('aria-expanded', 'true');
       }
     }
   </script>

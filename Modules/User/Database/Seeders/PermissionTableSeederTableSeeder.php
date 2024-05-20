@@ -18,10 +18,10 @@ class PermissionTableSeederTableSeeder extends Seeder
         Model::unguard();
         $permissions = [
 
-            'webcams-list',
-            'webcams-create',
-            'webcams-edit',
-            'webcams-delete',
+            'webcam-list',
+            'webcam-create',
+            'webcam-edit',
+            'webcam-delete',
 
             'user-list',
             'user-create',

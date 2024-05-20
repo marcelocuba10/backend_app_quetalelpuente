@@ -8,7 +8,7 @@
           <div class="col-md-8">
             <div class="title d-flex align-items-center flex-wrap mb-30">
               <h2 class="mr-40">Webcams</h2>
-              @can('webcams-create')
+              @can('webcam-create')
                 <a href="{{ url('/user/webcams/create') }}" class="main-btn info-btn btn-hover btn-sm"><i class="lni lni-plus mr-5"></i></a>
               @endcan 
             </div>
@@ -59,23 +59,23 @@
                             <td class="text-right">
                                 <div class="btn-group">
                                     <div class="action">
-                                        <a href="{{ route('notifications.show', $webcam->id) }}">
+                                        <a href="{{ url('/user/webcams/show/'.$webcam->id) }}">
                                             <button class="text-active">
                                                 <i class="lni lni-eye"></i>
                                             </button>
                                         </a>
                                     </div>
-                                    @can('notification-edit')
+                                    @can('webcam-edit')
                                     <div class="action">
-                                        <a href="{{ route('notifications.edit', $webcam->id) }}">
+                                        <a href="{{ url('/user/webcams/edit/'.$webcam->id) }}">
                                             <button class="text-info">
                                                 <i class="lni lni-pencil"></i>
                                             </button>
                                         </a>
                                     </div>
                                     @endcan
-                                    @can('notification-delete')
-                                    <form method="POST" action="{{ route('notifications.destroy', $webcam->id) }}">
+                                    @can('webcam-delete')
+                                    <form method="POST" action="{{ url('/user/webcams/delete/'.$webcam->id) }}">
                                         @csrf
                                         <div class="action">
                                             <input name="_method" type="hidden" value="DELETE">
@@ -89,26 +89,19 @@
                             </td>
                         </tr>
                         @endforeach
-                      <!-- end table row -->
                     </tbody>
                   </table>
-                  <!-- end table -->
                   @if (isset($search))
-                    {!! $notifications-> appends($search)->links() !!} <!-- appends envia variable en la paginacion-->
+                    {!! $webcams-> appends($search)->links() !!} 
                   @else
-                    {!! $notifications-> links() !!}    
+                    {!! $webcams-> links() !!}    
                   @endif
                 </div>
               </div>
-              <!-- end card -->
             </div>
-            <!-- end col -->
           </div>
-        <!-- end row -->
       </div>
-      <!-- ========== tables-wrapper end ========== -->
     </div>
-    <!-- end container -->
   </section>
 
 @endsection

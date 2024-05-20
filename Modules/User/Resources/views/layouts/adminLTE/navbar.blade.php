@@ -15,33 +15,33 @@
             <div class="header-right">
 
               <div class="profile-box ml-15">
+                <a href="{{ url('/user/users/edit/profile/'.Auth::user()->id) }} ">
+                  <span data-toggle="tooltip" data-placement="bottom" title="Cambiar nombre" style="position: relative;margin-right: 9px;margin-top: 9px;color: #647637;background: transparent;font-size: 18px;">
+                    <i class="lni lni-slice"></i>
+                  </span>
+                </a>
                 <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile" data-bs-toggle="dropdown" aria-expanded="false">
                   <div class="profile-info">
                     <div class="info">
-                      <h6>@if(Auth::check()) {{Auth::user()->name}} @endif</h6>
+                      <h6 style="text-transform: uppercase;color: #5c3a1e;">@if(Auth::check()) {{Auth::user()->name}} @endif</h6>
                       <div class="image">
-                        <img src="/assets/images/profile/profile-2.png" alt="" />
+                        @if (Auth::user()->img_profile)
+                          <img src="{{ asset('/images/profiles/'.Auth::user()->img_profile) }}" alt="profile">
+                        @else
+                          <img src="{{ asset('/public/adminLTE/images/profile/profile-2.png') }}" alt="profile">
+                        @endif
                         <span class="status"></span>
                       </div>
                     </div>
                   </div>
-                  <i class="lni lni-chevron-down"></i>
+                  <i class="lni lni-chevron-down" style="display: none"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 48px, 0px);" data-popper-placement="bottom-end">
                   <li>
-                    <a href="{{ route('users_.show.profile', Auth::user()->id) }}"><i class="lni lni-user"></i> Mi Perfil</a>
+                    <a href="{{ url('/user/users/profile/'.Auth::user()->id) }} "><i class="lni lni-user"></i> Mi Perfil</a>
                   </li>
                   <li>
-                    <a href="/user/notifications"><i class="lni lni-alarm"></i> Avisos</a>
-                  </li>
-                  <li>
-                    <a href="/user/schedules"> <i class="lni lni-calendar"></i> Horarios </a>
-                  </li>
-                  <li>
-                    <a href="#0"> <i class="lni lni-cog"></i> Configuraciones </a>
-                  </li>
-                  <li>
-                    <a href="/user/logout/"> <i class="lni lni-exit"></i> Cerrar Sesión </a>
+                    <a href="{{ url('/user/logout/') }} "> <i class="lni lni-exit"></i> Cerrar Sesión </a>
                   </li>
                 </ul>
               </div>
