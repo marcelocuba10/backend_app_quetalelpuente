@@ -1,8 +1,8 @@
-  <!-- ======== sidebar-nav start =========== -->
+
   <aside class="sidebar-nav-wrapper style-2">
     <div class="navbar-logo">
       <a href="{{ url('/') }}">
-        <img src="{{ asset('public/images/logos/logo-brown.png') }}" alt="logo" style="width: 180px;"/>
+        <img src="{{ asset('/public/images/logos/indexa-logo.png') }}" alt="logo" style="width: 180px;"/>
       </a>
     </div>
     <nav class="sidebar-nav">

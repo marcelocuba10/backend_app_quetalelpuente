@@ -34,9 +34,9 @@ class RoleTableSeeder extends Seeder
 
         //Assign permissions
         $role->givePermissionTo('user-list');
-        $role->givePermissionTo('webcams-list');
-        $role->givePermissionTo('webcams-edit');
-        $role->givePermissionTo('webcams-create');
-        $role->givePermissionTo('webcams-delete');
+        $role->givePermissionTo('webcam-list');
+        $role->givePermissionTo('webcam-edit');
+        $role->givePermissionTo('webcam-create');
+        $role->givePermissionTo('webcam-delete');
     }
 }
