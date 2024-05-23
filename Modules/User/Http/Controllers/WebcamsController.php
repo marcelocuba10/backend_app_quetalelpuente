@@ -110,6 +110,11 @@ class WebcamsController extends Controller
             ->where('id', '=', $id)
             ->first();
 
+        $types = array(
+            array('1', 'M3u8'),
+            array('0', 'Iframe'),
+        );
+
         $status = array(
             array('1', 'Habilitado'),
             array('0', 'Deshabilitado'),
@@ -118,7 +123,7 @@ class WebcamsController extends Controller
         $webcamType = $webcam->type;
         $webcamStatus = $webcam->status;
 
-        return view('user::webcams.edit', compact('webcam', 'webcamType', 'webcamStatus', 'status'));
+        return view('user::webcams.edit', compact('webcam', 'webcamType', 'webcamStatus', 'types', 'status'));
     }
 
     public function update(Request $request, $id)
