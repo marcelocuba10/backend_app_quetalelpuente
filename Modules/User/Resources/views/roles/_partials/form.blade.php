@@ -47,7 +47,7 @@
   <div class="col-12">
     <div class="button-group d-flex justify-content-center flex-wrap">
       <button type="submit" id="btn_submit" class="main-btn primary-btn btn-hover m-2">Guardar</button>
-      <a class="main-btn primary-btn-outline m-2" href="{{ url('/admin/ACL/roles') }}">Atrás</a>
+      <a class="main-btn primary-btn-outline m-2" href="{{ url('/user/ACL/roles') }}">Atrás</a>
     </div>
   </div>
 </div>
@@ -73,7 +73,7 @@ $(document).ready(function(){
   if(id){
     $.ajax({
       type: "POST",
-      url: "{{ URL::to('/admin/ACL/permissions/get') }}",
+      url: "{{ URL::to('/user/ACL/permissions/get') }}",
       data: { 
         id : id,
         guard_name : guard_name,
@@ -90,7 +90,7 @@ $(document).ready(function(){
       guard_name = document.getElementById("guard_name").value;
       $.ajax({
         type: "POST",
-        url: "{{ URL::to('/admin/ACL/permissions/get') }}",
+        url: "{{ URL::to('/user/ACL/permissions/get') }}",
         data: { 
           id : id,
           guard_name : guard_name,
@@ -105,7 +105,7 @@ $(document).ready(function(){
   }else{
     $.ajax({
       type: "POST",
-      url: "{{ URL::to('/admin/ACL/permissions/get') }}",
+      url: "{{ URL::to('/user/ACL/permissions/get') }}",
       data: { 
         guard_name : guard_name,
         "_token": "{{ csrf_token() }}",
@@ -121,7 +121,7 @@ $(document).ready(function(){
     guard_name = document.getElementById("guard_name").value;
     $.ajax({
       type: "POST",
-      url: "{{ URL::to('/admin/ACL/permissions/get') }}",
+      url: "{{ URL::to('/user/ACL/permissions/get') }}",
       data: { 
         guard_name : guard_name,
         "_token": "{{ csrf_token() }}",

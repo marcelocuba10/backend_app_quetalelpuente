@@ -7,10 +7,8 @@
     <div class="right">
         <div class="ergts" style="display: flex;">
             <a href="{{ url('/') }}"><button class="ththhf" type="button" class="btn btn-block create-account">Inicio</button></a>
-            <a href="{{ url('/admin/login') }}"><button class="ththhf" type="button" class="btn btn-block create-account">Gestión</button></a>
         </div>    
         <div class="login-texto off-mobile">
-            <p class="login-title">Bienvenido a {{ config('app.name') }}</p>
             <p class="login-message">Facilidades increíbles para tu empresa! :)</p>
         </div>
     </div>    
@@ -20,7 +18,7 @@
     
     <form method="post" action="{{ url('/user/login') }}">
 
-        <div class="form-icon"><img class="img-logo" src="{{ asset('/public/images/logos/indexa-logo.png') }}"></div>
+        <div class="form-icon"><img class="img-logo" src="{{ asset('/public/images/logos/ggcode-logo.png') }}"></div>
         <p class="login-message2">Iniciar Sesión</p>
         
         <input type="hidden" name="_token" value="{{ csrf_token() }}" />

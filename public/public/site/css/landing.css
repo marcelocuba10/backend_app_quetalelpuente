@@ -1,0 +1,171 @@
+/* styles.css */
+/* body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: #143d5f;
+} */
+
+body {
+    background-image: url('/public/images/site/1.jpg');
+    /* Reemplaza '/path/to/background.jpg' con la ruta de tu imagen de fondo */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    /* Esto hará que la imagen de fondo permanezca fija mientras se desplaza la página */
+}
+
+.text-p {
+    color: #fff;
+    font-size: 20px;
+    font-family: cursive;
+}
+
+header,
+footer {
+    /* Estilos para el encabezado y el pie de página si los tienes */
+}
+
+.landing {
+    text-align: center;
+    padding: 50px;
+}
+
+.phone-frame {
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 30px;
+    display: inline-block;
+}
+
+.video-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 56.25%;
+    /* Proporción 16:9 para un video responsive */
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.phone {
+    position: absolute;
+    height: 840px;
+    width: 415px;
+    border-radius: 60px;
+    border: 4px solid white;
+    top: 50%;
+    left: 50%;
+    margin-top: -420px;
+    background-color: white;
+    margin-left: -207px;
+}
+
+.speaker {
+    position: absolute;
+    height: 8px;
+    width: 80px;
+    border-radius: 8px;
+    border: 2px solid rgb(0, 0, 0);
+    top: 36px;
+    left: 166px;
+}
+
+.home {
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    border-radius: 100%;
+    border: 2px solid rgb(0, 0, 0);
+    bottom: 16px;
+    left: 180px;
+}
+
+.screen {
+    position: absolute;
+    height: 667px;
+    width: 375px;
+    border: 4px solid white;
+    border-radius: 4px;
+    top: 80px;
+    left: 16px;
+}
+
+.screen-top-bar {
+    background: white;
+    width: 100%;
+    height: 20px;
+}
+
+.signal {
+    float: left;
+    margin-left: 5px;
+    color: #143d5f;
+}
+
+.battery {
+    float: right;
+    margin-right: 5px;
+    color: #143d5f;
+}
+
+.download-button {
+    background-color: #4CAF50;
+    padding: 16px 50px;
+    border-radius: 16px;
+    font-size: 18px;
+    color: white;
+    font-weight: 700;
+    font-family: sans-serif;
+    margin-top: 20px;
+
+}
+
+.title-p {
+    color: #fff;
+    font-size: 57px;
+    font-family: cursive;
+    line-height: 56px;
+
+}
+
+.text-container {
+    margin-top: 10%;
+    width: 30%;
+    float: left;
+    margin-left: 40px;
+}
+
+/* Estilos para dispositivos móviles */
+@media only screen and (max-width: 768px) {
+    .text-container {
+        margin-top: 10%;
+        width: 80%; /* Cambiar el ancho para dispositivos móviles */
+        float: none; /* Eliminar flotación */
+        margin-left: auto; /* Centrar horizontalmente */
+        margin-right: auto; /* Centrar horizontalmente */
+        margin-bottom: 70px;
+    }
+    .phone {
+        position: relative;
+        height: 840px;
+        width: 415px;
+        border-radius: 60px;
+        border: 4px solid white;
+        top: 50%;
+        left: 50%;
+        margin-top: 0px;
+        background-color: white;
+        margin-left: -207px;
+        margin-bottom: 50px;
+    }
+}

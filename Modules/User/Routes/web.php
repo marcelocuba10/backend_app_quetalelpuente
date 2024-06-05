@@ -86,6 +86,7 @@ Route::prefix('user')->group(function () {
 
             Route::group(['prefix' => 'permissions'], function () {
                 Route::get('/', 'ACL\PermissionsController@index');
+                Route::any('/get', 'ACL\PermissionsController@getPermissions');
                 Route::get('/create', 'ACL\PermissionsController@create');
                 Route::post('/create', 'ACL\PermissionsController@store');
                 Route::get('/{id}/show', 'ACL\PermissionsController@show');

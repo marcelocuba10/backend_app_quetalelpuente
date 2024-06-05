@@ -27,6 +27,7 @@ class PermissionsController extends Controller
     {
         $permissions = DB::table('permissions')
             ->select('guard_name', 'id', 'name')
+            ->where('guard_name', '=', 'web')
             ->orderBy('created_at', 'DESC')
             ->paginate(16);
 
@@ -37,7 +38,7 @@ class PermissionsController extends Controller
     {
         $guard_name = $request->guard_name;
         $id =  $request->id;
-
+        
         /** Edit Role form */
         if ($id) {
             $role = Role::find($id);

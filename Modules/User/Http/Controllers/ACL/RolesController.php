@@ -29,6 +29,7 @@ class RolesController extends Controller
         $roles = DB::table('roles')
             ->leftjoin('users', 'roles.idReference', '=', 'users.idReference')
             ->select('roles.guard_name', 'roles.id', 'roles.name', 'roles.system_role', 'roles.idReference', 'users.name AS customer_name', 'users.idReference AS customer_idReference')
+            ->where('roles.guard_name', '=', 'web')
             ->orderBy('roles.created_at', 'DESC')
             ->paginate(10);
 
@@ -49,7 +50,7 @@ class RolesController extends Controller
         );
 
         $permissions = DB::table('permissions')
-            //->where('guard_name', '=', 'user')
+            ->where('guard_name', '=', 'web')
             ->select('guard_name', 'id', 'name')
             ->orderBy('created_at', 'DESC')
             ->get();
@@ -100,7 +101,7 @@ class RolesController extends Controller
     public function edit($id)
     {
         $role = Role::find($id);
-        $roleGuard = $role->guard_name;
+        $roleGuard = $role->guard_name; //web or admin
         $system_role = $role->system_role;
         $guard_names = Role::pluck('guard_name', 'guard_name')->all();
 
@@ -110,7 +111,7 @@ class RolesController extends Controller
         );
 
         $permissions = DB::table('permissions')
-            ->where('guard_name', '=', $role->guard_name)
+            ->where('guard_name', '=', 'web')
             ->select('guard_name', 'id', 'name')
             ->orderBy('created_at', 'DESC')
             ->get();
